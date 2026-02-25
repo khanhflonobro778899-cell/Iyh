@@ -1962,63 +1962,59 @@ local Window = Fluent:CreateWindow({
 local Tabs = {
     Main = Window:AddTab({
         Title = "Farm",
-        Icon = ""
+        Icon = "swords" -- Biểu tượng kiếm đan chéo, chuẩn nhất cho Farm
     }),
     Settings = Window:AddTab({
         Title = "Config",
-        Icon = ""
+        Icon = "settings-2" -- Biểu tượng cài đặt dạng nút gạt, nhìn hiện đại hơn bánh răng cũ
     }),
     Melee = Window:AddTab({
         Title = "Fighting Style",
-        Icon = ""
+        Icon = "hand" -- Biểu tượng bàn tay (võ thuật)
     }),
     Quests = Window:AddTab({
         Title = "Items Farm",
-        Icon = ""
-    }),
-    New = Window:AddTab({
-        Title = "New Events",
-        Icon = ""
+        Icon = "scroll" -- Cuộn giấy nhiệm vụ
     }),
     SeaEvent = Window:AddTab({
         Title = "Sea Events",
-        Icon = ""
+        Icon = "waves" -- Sóng biển
     }),
     Mirage = Window:AddTab({
         Title = "Mirage + RaceV4",
-        Icon = ""
+        Icon = "sparkles" -- Sự huyền bí, lấp lánh cho Race V4
     }),
     Drago = Window:AddTab({
         Title = "Drago Dojo",
-        Icon = ""
+        Icon = "flame" -- Ngọn lửa rồng cho Dojo
     }),
     Prehistoric = Window:AddTab({
         Title = "Prehistoric",
-        Icon = ""
+        Icon = "shrub" -- Biểu tượng thực vật cổ đại/rừng rậm
     }),
     Raids = Window:AddTab({
         Title = "Raid",
-        Icon = ""
+        Icon = "zap" -- Tia sét (tốc độ và kịch tính của Raid)
     }),
     Combat = Window:AddTab({
         Title = "Combat PVP",
-        Icon = ""
+        Icon = "crosshair" -- Hồng tâm ngắm bắn cho PVP
     }),
     Travel = Window:AddTab({
         Title = "Teleport",
-        Icon = ""
+        Icon = "map-pin" -- Ghim bản đồ di chuyển
     }),
     Fruit = Window:AddTab({
         Title = "Fruits",
-        Icon = ""
+        Icon = "cherry" -- Quả cherry (biểu tượng Fruit gọn nhất)
     }),
     Shop = Window:AddTab({
         Title = "Shop",
-        Icon = ""
+        Icon = "shopping-cart" -- Giỏ hàng
     }),
     Misc = Window:AddTab({
         Title = "Misc",
-        Icon = ""
+        Icon = "layers" -- Các lớp tính năng phụ trợ
     })
 }
 local FarmLevel = Tabs.Main:AddToggle("FarmLevel", {
@@ -4036,6 +4032,21 @@ local Initialize = Tabs.Settings:AddToggle("Initialize", {
 Initialize:OnChanged(function(Value)
     _G.Seriality = Value
 end)
+local MAX_RANGE = 60 
+local ATTACK_SPEED = 0.1 
+local FastAttackToggle = Tabs.Settings:AddToggle("FastAttackNew", {
+    Title = "Fast Attack [M1/Melee/Sword]",
+    Description = "[ Chém cực nhanh - Logic Mới ]",
+    Default = true
+})
+
+FastAttackToggle:OnChanged(function(Value)
+    _G.FastAttack = Value
+    _G.Seriality = Value 
+end)
+
+_G.FastAttack = FastAttackToggle.Value
+
 local Bringmob = Tabs.Settings:AddToggle("Bringmob", {
     Title = "Bring Mobs",
     Description = "",
@@ -10944,6 +10955,58 @@ task.spawn(function()
             end
         end)
     end)
+end)
+-[span_0](start_span)- Hàm tìm mục tiêu (Sử dụng folder Enemies đã có sẵn trong script của bạn)[span_0](end_span)
+local function GetNewTarget()
+    local char = game.Players.LocalPlayer.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return nil end
+    
+    local closest, dist = nil, MAX_RANGE or 60
+    -[span_1](start_span)- Tận dụng folder Enemies đã định nghĩa ở đầu script[span_1](end_span)
+    local folder = workspace:FindFirstChild("Enemies") or workspace
+    
+    for _, v in pairs(folder:GetChildren()) do
+        if v:FindFirstChild("Humanoid") and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+            local d = (char.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude
+            if d <= dist then
+                dist = d
+                closest = v
+            end
+        end
+    end
+    return closest
+end
+
+-- Logic chém nhanh tách biệt hoàn toàn
+local function ExecuteFastAttack()
+    if not _G.FastAttack then return end
+    
+    local char = game.Players.LocalPlayer.Character
+    local target = GetNewTarget()
+    
+    if target and char then
+        local tool = char:FindFirstChildOfClass("Tool")
+        -[span_2](start_span)[span_3](start_span)- Chỉ chém khi cầm Melee hoặc Sword để tránh lỗi[span_2](end_span)[span_3](end_span)
+        if tool and (tool.ToolTip == "Melee" or tool.ToolTip == "Sword") then 
+            tool:Activate() 
+            pcall(function()
+                -- Sử dụng đường dẫn Modules.Net theo logic mới của bạn
+                local net = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Net")
+                net["RE/RegisterAttack"]:FireServer(0)
+                net["RE/RegisterHit"]:FireServer(target.HumanoidRootPart, {target.HumanoidRootPart})
+            end)
+        end
+    end
+end
+
+-- Chạy vòng lặp trong một luồng riêng (task.spawn) để không làm treo script gốc
+task.spawn(function()
+    while true do
+        task.wait(ATTACK_SPEED or 0.1)
+        if _G.FastAttack then
+            pcall(ExecuteFastAttack)
+        end
+    end
 end)
 Window:SelectTab(1)
 local ScreenGui = Instance.new("ScreenGui")
