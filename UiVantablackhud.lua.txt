@@ -2,9 +2,9 @@ if (game:GetService("CoreGui")):FindFirstChild("Vantablackhud") and (game:GetSer
 	(game:GetService("CoreGui")).Vantablackhud:Destroy();
 	(game:GetService("CoreGui")).ScreenGui:Destroy();
 end;
-_G.Primary = Color3.fromRGB(100, 100, 100);
-_G.Dark = Color3.fromRGB(22, 22, 26);
-_G.Third = Color3.fromRGB(255, 0, 0);
+_G.Primary = Color3.fromRGB(200, 200, 200);
+_G.Dark = Color3.fromRGB(235, 235, 235);
+_G.Third = Color3.fromRGB(130, 130, 130);
 function CreateRounded(Parent, Size)
 	local Rounded = Instance.new("UICorner");
 	Rounded.Name = "Rounded";
@@ -337,7 +337,7 @@ function Update:Window(Config)
 	OutlineMain.Parent = Vantablackhud;
 	OutlineMain.ClipsDescendants = true;
 	OutlineMain.AnchorPoint = Vector2.new(0.5, 0.5);
-	OutlineMain.BackgroundColor3 = Color3.fromRGB(30, 30, 30);
+	OutlineMain.BackgroundColor3 = Color3.fromRGB(180, 180, 180);
 	OutlineMain.BackgroundTransparency = 0.4;
 	OutlineMain.Position = UDim2.new(0.5, 0, 0.45, 0);
 	OutlineMain.Size = UDim2.new(0, 0, 0, 0);
@@ -347,7 +347,7 @@ function Update:Window(Config)
 	Main.Parent = OutlineMain;
 	Main.ClipsDescendants = true;
 	Main.AnchorPoint = Vector2.new(0.5, 0.5);
-	Main.BackgroundColor3 = Color3.fromRGB(24, 24, 26);
+    Main.BackgroundColor3 = Color3.fromRGB(235, 235, 235);
 	Main.BackgroundTransparency = 0;
 	Main.Position = UDim2.new(0.5, 0, 0.5, 0);
 	Main.Size = WindowConfig.Size;
@@ -439,7 +439,7 @@ function Update:Window(Config)
 	BackgroundSettings.ClipsDescendants = true;
 	BackgroundSettings.Active = true;
 	BackgroundSettings.AnchorPoint = Vector2.new(0, 0);
-	BackgroundSettings.BackgroundColor3 = Color3.fromRGB(10, 10, 10);
+    BackgroundSettings.BackgroundColor3 = Color3.fromRGB(150, 150, 150);
 	BackgroundSettings.BackgroundTransparency = 0.3;
 	BackgroundSettings.Position = UDim2.new(0, 0, 0, 0);
 	BackgroundSettings.Size = UDim2.new(1, 0, 1, 0);
@@ -450,7 +450,7 @@ function Update:Window(Config)
 	SettingsFrame.Parent = BackgroundSettings;
 	SettingsFrame.ClipsDescendants = true;
 	SettingsFrame.AnchorPoint = Vector2.new(0.5, 0.5);
-	SettingsFrame.BackgroundColor3 = Color3.fromRGB(24, 24, 26);
+    SettingsFrame.BackgroundColor3 = Color3.fromRGB(235, 235, 235);
 	SettingsFrame.BackgroundTransparency = 0;
 	SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0);
 	SettingsFrame.Size = UDim2.new(0.7, 0, 0.7, 0);
@@ -624,7 +624,7 @@ function Update:Window(Config)
 	local Tab = Instance.new("Frame");
 	Tab.Name = "Tab";
 	Tab.Parent = Main;
-	Tab.BackgroundColor3 = Color3.fromRGB(45, 45, 45);
+	Tab.BackgroundColor3 = Color3.fromRGB(210, 210, 210);
 	Tab.Position = UDim2.new(0, 8, 0, Top.Size.Y.Offset);
 	Tab.BackgroundTransparency = 1;
 	Tab.Size = UDim2.new(0, WindowConfig.TabWidth, Config.Size.Y.Scale, Config.Size.Y.Offset - Top.Size.Y.Offset - 8);
