@@ -1,0 +1,118 @@
+--// =====================================
+--// FAST ATTACK ALL (FAKE BLOX FRUIT)
+--// NO EQUIP FRUIT
+--// AURA FRUIT ONLY
+--// =====================================
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+
+local Player = Players.LocalPlayer
+
+--// CONFIG
+local CONFIG = {
+    RANGE = 17000, -- Đã cập nhật từ 15000 lên 17000 theo yêu cầu
+    ATTACK_INTERVAL = 0.01
+}
+
+--// TIMER
+local lastAttack = 0
+
+--// CHECK ALIVE
+local function IsAlive(m)
+    local h = m:FindFirstChild("Humanoid")
+    return h and h.Health > 0
+end
+
+--// GET TARGETS
+local function GetTargets()
+
+    local char = Player.Character
+    if not char then return {} end
+
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return {} end
+
+    local list = {}
+
+    local function Scan(folder)
+        for _, v in pairs(folder:GetChildren()) do
+            if v ~= char
+            and v:FindFirstChild("HumanoidRootPart")
+            and IsAlive(v) then
+                local dist = (hrp.Position - v.HumanoidRootPart.Position).Magnitude
+                if dist <= CONFIG.RANGE then
+                    table.insert(list, v)
+                end
+            end
+        end
+    end
+
+    if Workspace:FindFirstChild("Enemies") then
+        Scan(Workspace.Enemies)
+    end
+
+    if Workspace:FindFirstChild("Characters") then
+        Scan(Workspace.Characters)
+    end
+
+    return list
+
+end
+
+--// FIND FRUIT (CHARACTER OR BACKPACK) - NO EQUIP
+local function GetFruitTool()
+
+    local char = Player.Character
+
+    if char then
+        for _, v in pairs(char:GetChildren()) do
+            if v:IsA("Tool") and v.ToolTip == "Blox Fruit" then
+                return v
+            end
+        end
+    end
+
+    for _, v in pairs(Player.Backpack:GetChildren()) do
+        if v:IsA("Tool") and v.ToolTip == "Blox Fruit" then
+            return v
+        end
+    end
+
+end
+
+--// FAKE FRUIT ATTACK (NO EQUIP)
+local function AttackFruit(targets)
+
+    if #targets == 0 then return end
+
+    local fruit = GetFruitTool()
+    if not fruit then return end
+
+    local remote = fruit:FindFirstChild("LeftClickRemote")
+    if not remote then return end
+
+    remote:FireServer(Vector3.new(.01, -500, .01), 1, true)
+    task.wait()
+    remote:FireServer(false)
+
+end
+
+--// MAIN LOOP
+RunService.Heartbeat:Connect(function()
+
+    local now = tick()
+    if (now - lastAttack) < CONFIG.ATTACK_INTERVAL then return end
+    lastAttack = now
+
+    local targets = GetTargets()
+    if #targets == 0 then return end
+
+    AttackFruit(targets)
+
+end)
+
+print("✅ FAKE FRUIT AURA (NO EQUIP) ENABLED - RANGE: 17000")
+
